@@ -1,0 +1,11 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+api_post_show:
+    path:       /hash/{inicial}/
+    controller: App\Controller\HashStringController::hash_string
+    methods:    GET|HEAD
+api_post_api:
+    path:       /api/{inicial}/{json}
+    controller: App\Controller\HashStringController::hash_string
+    methods:    GET|HEAD

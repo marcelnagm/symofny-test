@@ -1,0 +1,9 @@
+## YAML Template.
+---
+framework:
+    rate_limiter:
+        anonymous_api:
+            # use 'sliding_window' if you prefer that policy
+            policy: 'sliding window'
+            limit: 10
+            interval: '1 minute'
