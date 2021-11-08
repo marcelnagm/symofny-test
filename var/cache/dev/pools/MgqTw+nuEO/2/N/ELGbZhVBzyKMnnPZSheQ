@@ -1,0 +1,3 @@
+<?php //App%255CController%255CHashStringController%2523hash_string
+
+return [PHP_INT_MAX, []];

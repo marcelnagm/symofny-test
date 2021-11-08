@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\EntradaRepository;
 use Doctrine\ORM\Mapping as ORM;
-
+use Assert\DateTime;
 /**
  * @ORM\Entity(repositoryClass=EntradaRepository::class)
  */
@@ -18,14 +18,10 @@ class Entrada
     private $id;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", length=255)
+     * @var string A "Y-m-d H:i:s" formatted value     
      */
     private $batch;
-
-    /**
-     * @ORM\Column(type="bigint")
-     */
-    private $bloco;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -41,15 +37,31 @@ class Entrada
      * @ORM\Column(type="bigint")
      */
     private $n;
+    
+        public function __toString(): String
+        {
+            return '['.($this->getBatchFormatted(). ' ').' , '.$this->getBloco().' , '.$this->getEntrada(). ' , '.$this->getChave().']';
+        }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    public function getBatchFormatted(): String
+    {
+        
+        if ($this->batch instanceof \DateTime) {
+    return  $this->batch->format('Y-m-d H:i:s');
+        }
+    }
+    
     public function getBatch(): ?\DateTimeInterface
     {
-        return $this->batch;
+        
+        if ($this->batch instanceof \DateTime) {
+    return  $this->batch->format('Y-m-d H:i:s');
+        }
     }
 
     public function setBatch(\DateTimeInterface $batch): self
@@ -61,15 +73,10 @@ class Entrada
 
     public function getBloco(): ?string
     {
-        return $this->bloco;
+        return $this->id;
     }
 
-    public function setBloco(string $bloco): self
-    {
-        $this->bloco = $bloco;
-
-        return $this;
-    }
+    
 
     public function getEntrada(): ?string
     {

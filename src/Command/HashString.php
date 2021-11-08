@@ -14,6 +14,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Response;
+use App\Entity\Entrada;
+use Doctrine\ORM\EntityManagerInterface;
+
 
 /**
  * Description of HashString
@@ -27,11 +30,14 @@ class HashString extends Command {
     protected static $defaultName = 'avato:test';
     private $string_inicial = "";
     private $number;
+ private $entityManager;
 
-    public function __construct(String $_string = "", $_number = 0) {
+ 
+    public function __construct(String $_string = "", $_number = 0,EntityManagerInterface $entityManager) {
         $this->string_inicial = (String) $_string;
         $this->number = $_number;
-
+        $this->entityManager = $entityManager;
+          
         parent::__construct();
     }
 
@@ -47,7 +53,7 @@ class HashString extends Command {
     protected function execute(InputInterface $input, OutputInterface $output): int {
         $output->writeln('Whoa!');
         $string = $input->getArgument('string_inicial');
-
+        $date =  date('d/m/Y H:i');
         for ($i = 0; $i < $input->getArgument('number'); $i++) {
 
 //           $ch = curl_init();
@@ -68,7 +74,7 @@ class HashString extends Command {
 
                     $contentType = $response->getHeaders()['X-RateLimit-Retry-After'][0];
                     echo $contentType . "\n";
-
+//                   TODO fazer a subtracao do tempo atual e do tempo a ser aguardado
                     goto repeat;
                 }
             } catch (\Symfony\Component\HttpClient\Exception\ClientException $e) {
@@ -78,7 +84,17 @@ class HashString extends Command {
             }
 
 
-            $result = json_decode($content, true);
+            $result = json_decode($content, true);            
+            
+//            $entityManager = $this->getDoctrine()->getManager();
+            
+            $entrada = new Entrada() ;
+            $entrada->setBatch(new \DateTime($date));            
+            $entrada->setEntrada($string);
+            $entrada->setChave($result['aleartoria']);
+            $entrada->setN($result['n']);
+            $this->entityManager->persist ($entrada);
+            $this->entityManager->flush();
             $string = $result['chave'];
         }
 
